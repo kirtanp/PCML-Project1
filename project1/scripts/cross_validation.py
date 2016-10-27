@@ -2,11 +2,23 @@
 """cross validation function."""
 
 import numpy as np
+import matplotlib.pyplot as plt
 from costs import *
 
 def ridge_regression(y, tx, lamb):
     """implement ridge regression."""
     return np.linalg.solve((tx.T @ tx) + lamb*np.eye(tx.shape[1]), tx.T @ y)
+
+def cross_validation_visualization(lambds, mse_tr, mse_te):
+    """visualization the curves of mse_tr and mse_te."""
+    plt.semilogx(lambds, mse_tr, marker=".", color='b', label='train error')
+    plt.semilogx(lambds, mse_te, marker=".", color='r', label='test error')
+    plt.xlabel("lambda")
+    plt.ylabel("rmse")
+    plt.title("cross validation")
+    plt.legend(loc=2)
+    plt.grid(True)
+    plt.savefig("cross_validation")
 
 def build_k_indices(y, k_fold, seed):
     """build k indices for k-fold."""
@@ -51,4 +63,6 @@ def cross_validation_demo(y, x, k_fold, lambdas, seed):
             sum_te = sum_te + loss_te
         rmse_tr.append(sum_tr/k_fold)
         rmse_te.append(sum_te/k_fold)
+    cross_validation_visualization(lambdas, rmse_tr, rmse_te)
     return rmse_te
+
